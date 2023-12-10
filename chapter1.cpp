@@ -5,7 +5,7 @@
 #include <time.h>
 
 void timerHandler(int sig, siginfo_t *si, void *uc) {
-    std::cout << "Таймер сработал!" << std::endl;
+    std::cout << "Timer triggered!" << std::endl;
 }
 
 int main() {
@@ -21,7 +21,7 @@ int main() {
 
     timer_t timerid;
     if (timer_create(CLOCK_REALTIME, &sev, &timerid) == -1) {
-        perror("Ошибка при создании таймера");
+        std::cerr << "Error creating timer" << std::endl;
         exit(EXIT_FAILURE);
     }
 
@@ -35,7 +35,7 @@ int main() {
     its.it_interval.tv_nsec = 0;
 
     if (timer_settime(timerid, 0, &its, NULL) == -1) {
-        perror("Ошибка при запуске таймера");
+        std::cerr << "Error starting timer" << std::endl;
         exit(EXIT_FAILURE);
     }
 
@@ -51,9 +51,9 @@ int main() {
         diffTime.tv_nsec += 1000000000;
     }
 
-    std::cout << "Время создания таймера: " << createTime.tv_sec << " с " << createTime.tv_nsec << " нс" << std::endl;
-    std::cout << "Время запуска таймера: " << startTime.tv_sec << " с " << startTime.tv_nsec << " нс" << std::endl;
-    std::cout << "Разница времени: " << diffTime.tv_sec << " с " << diffTime.tv_nsec << " нс" << std::endl;
+    std::cout << "Timer creation time: " << createTime.tv_sec << " s " << createTime.tv_nsec << " ns" << std::endl;
+    std::cout << "Timer start time: " << startTime.tv_sec << " s " << startTime.tv_nsec << " ns" << std::endl;
+    std::cout << "Time difference: " << diffTime.tv_sec << " s " << diffTime.tv_nsec << " ns" << std::endl;
 
     return 0;
 }
