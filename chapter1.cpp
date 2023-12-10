@@ -1,6 +1,5 @@
 #include <iostream>
 #include <cstdlib>
-#include <ctime>
 #include <cstring>
 #include <signal.h>
 #include <time.h>
@@ -12,8 +11,13 @@ void timerHandler(int sig, siginfo_t *si, void *uc) {
 int main() {
     struct sigevent sev;
     std::memset(&sev, 0, sizeof(struct sigevent));
-    sev.sigev_notify = SIGEV_SIGNAL;
-    sev.sigev_signo = SIGRTMIN;
+    sev.sigev_notify = SIGEV_SIGNAL; 
+    sev.sigev_signo = SIGRTMIN; 
+
+    struct sigaction sa;
+    sa.sa_flags = SA_SIGINFO;   
+    sa.sa_sigaction = timerHandler;
+    sigaction(SIGRTMIN, &sa, NULL);
 
     timer_t timerid;
     if (timer_create(CLOCK_REALTIME, &sev, &timerid) == -1) {
