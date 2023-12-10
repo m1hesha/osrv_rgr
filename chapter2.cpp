@@ -21,7 +21,7 @@ void my_thread_function(union sigval sv) {
     int srv_coid;
     int chid = sv.sival_int;
     rcvid = MsgReceive(chid, &msg, sizeof(msg), NULL);
-    printf("Новый поток (TID: %lu) получил:\n", pthread_self());
+    printf("New thread (TID: %lu) received:\n", pthread_self());
 }
 
 void* client_thread(void* arg) {
@@ -31,16 +31,16 @@ void* client_thread(void* arg) {
     chid = ChannelCreate(0);
     coid = ConnectAttach(0, 0, chid, _NTO_SIDE_CHANNEL, 0);
     if ((srv_coid = name_open(MY_SERV, 0)) == -1) {
-        fprintf(stderr, "Не удалось найти сервер, ошибка %d\n", errno);
+        fprintf(stderr, "Failed to find the server, error %d\n", errno);
         return NULL;
     }
 
-    printf("Клиентский поток (TID: %lu): Запущен\n", pthread_self());
+    printf("Client thread (TID: %lu): Started\n", pthread_self());
 
     if (MsgSend(srv_coid, &msg, sizeof(msg), NULL, 0) == -1) {
-        fprintf(stderr, "Ошибка отправки сообщения от клиента, ошибка %d\n", errno);
+        fprintf(stderr, "Error sending message from client, error %d\n", errno);
     } else {
-        printf("Клиентский поток (TID: %lu): Отправлено сообщение\n", pthread_self());
+        printf("Client thread (TID: %lu): Message sent\n", pthread_self());
     }
     return NULL;
 }
@@ -50,8 +50,8 @@ void* server_thread(void* arg) {
     int rcvid;
     struct my_msg msg;
     struct _msg_info msginfo;
-    printf("Серверный поток (TID: %lu): Запущен\n", pthread_self());
-    printf("Серверный поток (TID: %lu): Ожидание\n", pthread_self());
+    printf("Server thread (TID: %lu): Started\n", pthread_self());
+    printf("Server thread (TID: %lu): Waiting\n", pthread_self());
 
     rcvid = MsgReceive(attach->chid, &msg, sizeof(msg.sev), &msginfo);
     MsgReply(rcvid, EOK, NULL, 0);
@@ -62,7 +62,7 @@ void* server_thread(void* arg) {
     }
     for (int i = 0; i < MAX_THREADS; i++) {
         if (MsgDeliverEvent(rcvid, &msg.sev[i]) == -1) {
-            fprintf(stderr, "Ошибка доставки события от сервера, ошибка %d\n", errno);
+            fprintf(stderr, "Error delivering event from server, error %d\n", errno);
         }
     }
     return NULL;
